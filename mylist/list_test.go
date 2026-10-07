@@ -191,13 +191,13 @@ func TestList_InsertAfter(t *testing.T) {
 
 func TestList_Remove(t *testing.T) {
 	tests := []struct {
-		name       string
-		before     []any
-		removeIdx  int
-		wantVal    any
-		wantAfter  []any
-		wantNil    bool
-		otherList  bool
+		name      string
+		before    []any
+		removeIdx int
+		wantVal   any
+		wantAfter []any
+		wantNil   bool
+		otherList bool
 	}{
 		{
 			name:      "remove head from multi-item list",
