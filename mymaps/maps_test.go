@@ -1,6 +1,7 @@
 package mymaps
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -38,13 +39,15 @@ func TestClone(t *testing.T) {
 		input map[string]int
 		want  map[string]int
 	}{
+		{"nil clones to nil", nil, nil},
+		{"empty map clones to empty map", map[string]int{}, map[string]int{}},
 		{"non-empty input clone keeps values", map[string]int{"a": 1, "b": 2, "c": 3}, map[string]int{"a": 1, "b": 2, "c": 3}},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			clone := Clone(tt.input)
-			if !Equal(clone, tt.want) {
+			if !reflect.DeepEqual(clone, tt.want) {
 				t.Fatalf("Clone(%#v) = %#v, want %#v", tt.input, clone, tt.want)
 			}
 		})
@@ -67,22 +70,6 @@ func TestClone(t *testing.T) {
 			t.Fatalf("clone should be independent: original=%#v clone=%#v", original, clone)
 		}
 	})
-
-	t.Run("nil clones nil", func(t *testing.T) {
-		var original map[string]int // nil map
-		clone := Clone(original)
-		if clone != nil {
-			t.Fatalf("Clone(nil) = %#v, want nil", clone)
-		}
-	})
-
-	t.Run("empty map clones to empty map", func(t *testing.T) {
-		original := map[string]int{} // empty map
-		clone := Clone(original)
-		if clone == nil || len(clone) != 0 {
-			t.Fatalf("Clone(empty) = %#v, want empty map", clone)
-		}
-	})
 }
 
 func TestClear(t *testing.T) {
@@ -92,12 +79,14 @@ func TestClear(t *testing.T) {
 		want  map[string]int
 	}{
 		{"non-empty map is emptied", map[string]int{"a": 1, "b": 2, "c": 3}, map[string]int{}},
+		{"name: empty map remains empty", map[string]int{}, map[string]int{}},
+		{"name: nil map remains nil", nil, nil},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			Clear(tt.input)
-			if !Equal(tt.input, tt.want) {
+			if !reflect.DeepEqual(tt.input, tt.want) {
 				t.Fatalf("Clear(%#v) left %#v, want %#v", tt.input, tt.input, tt.want)
 			}
 		})
@@ -110,21 +99,5 @@ func TestClear(t *testing.T) {
 			}
 		}()
 		Clear(nil)
-	})
-
-	t.Run("nil left alone", func(t *testing.T) {
-		var original map[string]int // nil map
-		Clear(original)
-		if original != nil {
-			t.Fatalf("Clear(nil) changed nil status")
-		}
-	})
-
-	t.Run("empty map clear to empty map", func(t *testing.T) {
-		original := map[string]int{} // empty map
-		Clear(original)
-		if original == nil || len(original) != 0 {
-			t.Fatalf("Clone(empty) is broken, want empty map")
-		}
 	})
 }
