@@ -1,6 +1,9 @@
 package myslices
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func TestIntsEqual(t *testing.T) {
 	tests := []struct {
@@ -39,7 +42,7 @@ func TestIntsClone(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			clone := IntsClone(tt.input)
-			if !IntsEqual(clone, tt.want) {
+			if !reflect.DeepEqual(clone, tt.want) {
 				t.Fatalf("IntsClone(%#v) = %#v, want %#v", tt.input, clone, tt.want)
 			}
 		})
@@ -85,7 +88,7 @@ func TestIntsInsert(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, ok := IntsInsert(tt.s, tt.index, tt.v)
-			if ok != tt.ok || !IntsEqual(got, tt.want) {
+			if ok != tt.ok || !reflect.DeepEqual(got, tt.want) {
 				t.Fatalf("IntsInsert(%#v, %d, %#v) = %#v, %v; want %#v, %v", tt.s, tt.index, tt.v, got, ok, tt.want, tt.ok)
 			}
 		})
@@ -94,7 +97,7 @@ func TestIntsInsert(t *testing.T) {
 	t.Run("s is never modified", func(t *testing.T) {
 		original := []int{1, 2, 3}
 		_, _ = IntsInsert(original, 1, []int{9, 8})
-		if !IntsEqual(original, []int{1, 2, 3}) {
+		if !reflect.DeepEqual(original, []int{1, 2, 3}) {
 			t.Fatalf("original slice should not be modified: got %#v", original)
 		}
 	})
@@ -166,7 +169,7 @@ func TestIntsDeleteFunc(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := IntsDeleteFunc(tt.input, tt.del)
-			if !IntsEqual(got, tt.want) {
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Fatalf("IntsDeleteFunc failed: got %#v want %#v", got, tt.want)
 			}
 		})
@@ -178,12 +181,12 @@ func TestIntsDeleteFunc(t *testing.T) {
 		result := IntsDeleteFunc(s, del)
 
 		expected := []int{1, 3, 5}
-		if !IntsEqual(result, expected) {
+		if !reflect.DeepEqual(result, expected) {
 			t.Fatalf("delete func failed: got %#v want %#v", result, expected)
 		}
 
 		// Check that the original slice has been modified in place
-		if !IntsEqual(s[:len(result)], expected) {
+		if !reflect.DeepEqual(s[:len(result)], expected) {
 			t.Fatalf("original slice not modified in place: got %#v want %#v", s[:len(result)], expected)
 		}
 
@@ -212,7 +215,7 @@ func TestIntsFilter(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := IntsFilter(tt.input, tt.keep)
-			if !IntsEqual(got, tt.want) {
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Fatalf("filter failed: got %#v want %#v", got, tt.want)
 			}
 		})
@@ -224,12 +227,12 @@ func TestIntsFilter(t *testing.T) {
 		result := IntsFilter(original, keep)
 
 		want := []int{2, 4}
-		if !IntsEqual(result, want) {
+		if !reflect.DeepEqual(result, want) {
 			t.Fatalf("filter failed: got %#v want %#v", result, want)
 		}
 
 		// Check that the original slice has not been modified
-		if !IntsEqual(original, []int{1, 2, 3, 4, 5}) {
+		if !reflect.DeepEqual(original, []int{1, 2, 3, 4, 5}) {
 			t.Fatalf("original slice should not be modified: got %#v want %#v", original, []int{1, 2, 3, 4, 5})
 		}
 	})
@@ -250,7 +253,7 @@ func TestIntsMap(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := IntsMap(tt.input, tt.f)
-			if !IntsEqual(got, tt.want) {
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Fatalf("map failed: got %#v want %#v", got, tt.want)
 			}
 		})
@@ -262,12 +265,12 @@ func TestIntsMap(t *testing.T) {
 		result := IntsMap(original, f)
 
 		want := []int{2, 4, 6, 8, 10}
-		if !IntsEqual(result, want) {
+		if !reflect.DeepEqual(result, want) {
 			t.Fatalf("map failed: got %#v want %#v", result, want)
 		}
 
 		// Check that the original slice has not been modified
-		if !IntsEqual(original, []int{1, 2, 3, 4, 5}) {
+		if !reflect.DeepEqual(original, []int{1, 2, 3, 4, 5}) {
 			t.Fatalf("original slice should not be modified: got %#v want %#v", original, []int{1, 2, 3, 4, 5})
 		}
 	})

@@ -153,10 +153,9 @@ func TestFloat64s(t *testing.T) {
 			want:  []float64{math.Inf(-1), math.Copysign(0, -1), 0, math.SmallestNonzeroFloat64, math.MaxFloat64, math.Inf(1)},
 		},
 		{
-			name:  "NaN ordering (TODO)",
+			name:  "NaN",
 			input: []float64{1, math.NaN(), -1},
 			want:  []float64{math.NaN(), -1, 1},
-			todo:  "TODO: decide the intended ordering of NaN relative to finite values",
 		},
 	}
 
