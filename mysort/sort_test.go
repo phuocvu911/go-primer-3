@@ -110,6 +110,21 @@ func TestInts(t *testing.T) {
 	}
 }
 
+func float64SlicesEqual(a, b []float64) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if math.IsNaN(a[i]) && math.IsNaN(b[i]) {
+			continue
+		}
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
+}
+
 func TestFloat64s(t *testing.T) {
 	tests := []struct {
 		name  string
@@ -161,14 +176,10 @@ func TestFloat64s(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if tt.todo != "" {
-				t.Skip(tt.todo)
-			}
 
-			got := slices.Clone(tt.input)
-			Float64s(got)
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Float64s() got = %v, want %v", got, tt.want)
+			Float64s(tt.input)
+			if !float64SlicesEqual(tt.input, tt.want) {
+				t.Errorf("Float64s() got = %v, want %v", tt.input, tt.want)
 			}
 		})
 	}
